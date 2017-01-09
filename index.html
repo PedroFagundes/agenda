@@ -34,27 +34,41 @@
 		angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($scope, $http) {
 			$scope.app = "Lista Telefonica";
 			$scope.contatos = [];
+			$scope.operadoras = [];
 
-			var carregarContatos = function () {
-				$http({
-					method: 'GET',
-					url: 'http://localhost:8000/api/v1/products/get_products'
-				}).then(function (response) {
-					console.log(response);
+			var carregarOperadoras = function () {
+				$http.get('http://localhost:8000/operadoras').then(function (response) {
+					$scope.operadoras = response.data;
 				}, function (response) {
 					console.log('Erro ao adquirir os dados');
 				});
 			}
 
-			$scope.operadoras = [
-				{nome: "Oi", codigo: 14, categoria: "Celular", preco: 2},
-				{nome: "Vivo", codigo: 15, categoria: "Celular", preco: 1},
-				{nome: "Tim", codigo: 41, categoria: "Celular", preco: 3},
-				{nome: "GVT", codigo: 15, categoria: "Fixo", preco: 1},
-				{nome: "Embratel", codigo: 41, categoria: "Fixo", preco: 2},
-			];
+			var carregarContatos = function () {
+				$http.get('http://localhost:8000/contatos/').then(function (response) {
+					$scope.contatos = response.data;
+					$scope.contatos.filter(function (contato) {
+						contato.operadora = $scope.operadoras.find(function (operadora) {
+							return operadora.pk == contato.operadora;
+						});
+					});
+				}, function (response) {
+					console.log('Erro ao adquirir os dados');
+				});
+			}
+
 			$scope.adicionarContato = function (contato) {
-				$scope.contatos.push(angular.copy(contato));
+				// permitir requisições da mesma origem
+				$http.defaults.headers.post["Content-Type"] = "text/plain";
+
+				contato.operadora = contato.operadora.pk;
+
+				$http.post('http://localhost:8000/contatos/', contato).then(function (response) {
+					console.log(response.data);
+				}, function (response) {
+					console.log('Erro ao adquirir os dados');
+				});
+
 				delete $scope.contato;
 				$scope.contatoForm.$setPristine();
 			};
@@ -73,6 +87,7 @@
 				$scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
 			};
 
+			carregarOperadoras();
 			carregarContatos();
 		});
 	</script>
@@ -94,7 +109,7 @@
 				<td><input type="checkbox" ng-model="contato.selecionado"></td>
 				<td>{{contato.nome | uppercase}}</td>
 				<td>{{contato.telefone}}</td>
-				<td>{{contato.operadora.nome | lowercase}}</td>
+				<td>{{contato.operadora.nome}}</td>
 				<td>{{contato.data | date:'dd/MM/yyyy HH:mm'}}</td>
 				<td><div style="width: 20px; height: 20px;" ng-style="{'background-color': contato.cor}"></div></td>
 			</tr>

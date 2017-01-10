@@ -1,0 +1,5 @@
+#Py caches
+/__pycache__/
+**/*.pyc[co]
+**/*.pyc
+.pyc

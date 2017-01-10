@@ -64,13 +64,12 @@
 				contato.operadora = contato.operadora.pk;
 
 				$http.post('http://localhost:8000/contatos/', contato).then(function (response) {
-					console.log(response.data);
+					carregarContatos();
+					delete $scope.contato;
+					$scope.contatoForm.$setPristine();
 				}, function (response) {
 					console.log('Erro ao adquirir os dados');
 				});
-
-				delete $scope.contato;
-				$scope.contatoForm.$setPristine();
 			};
 			$scope.apagarContatos = function (contatos) {
 				$scope.contatos = contatos.filter(function (contato) {
@@ -102,7 +101,7 @@
 				<th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
 				<th><a href="" ng-click="ordenarPor('telefone')">Telefone</a></th>
 				<th>Operadora</th>
-				<th>Data</th>
+				<th>Data de aniversário</th>
 				<th></th>
 			</tr>
 			<tr ng-class="{'selecionado negrito': contato.selecionado}" ng-repeat="contato in contatos | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
@@ -118,6 +117,7 @@
 		<form name="contatoForm">
 			<input class="form-control" type="text" ng-model="contato.nome" name="nome" placeholder="Nome" ng-required="true" ng-minlength="10">
 			<input class="form-control" type="text" ng-model="contato.telefone" name="telefone"  placeholder="Telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/">
+			<input class="form-control" type="text" ng-model="contato.data" name="data"  placeholder="Data de aniversário" ng-required="true" ng-pattern="/^\d{4}-\d{2}-\d{2}$/">
 			<select class="form-control" ng-model="contato.operadora" ng-options="operadora.nome + '( ' + (operadora.preco | currency) + ' )' for operadora in operadoras | orderBy:'nome'">
 				<option value="">Selecione uma operadora</option>
 			</select>

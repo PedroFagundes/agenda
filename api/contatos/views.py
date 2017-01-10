@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
@@ -22,5 +24,9 @@ def api_contatos(request):
 		serializer = ContatoSerializer(contatos, many=True)
 		return JSONResponse(serializer.data)
 	if request.method == 'POST':
-		serializer = ContatoSerializer(data=request.body)
-		import pdb; pdb.set_trace()		
+		dados = json.loads(request.body)
+		serializer = ContatoSerializer(data=dados)
+		if serializer.is_valid():
+			contato = serializer.save()
+			return JsonResponse(serializer.data, status=201)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

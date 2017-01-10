@@ -47,13 +47,14 @@
 			var carregarContatos = function () {
 				$http.get('http://localhost:8000/contatos/').then(function (response) {
 					$scope.contatos = response.data;
+					// coloca o objeto operadora respectivo a cada objeto contato
 					$scope.contatos.filter(function (contato) {
 						contato.operadora = $scope.operadoras.find(function (operadora) {
 							return operadora.pk == contato.operadora;
 						});
 					});
 				}, function (response) {
-					console.log('Erro ao adquirir os dados');
+					$scope.message = "Aconteceu um problema: " + response.status + ' - ' + response.statusText;
 				});
 			}
 
@@ -64,9 +65,9 @@
 				contato.operadora = contato.operadora.pk;
 
 				$http.post('http://localhost:8000/contatos/', contato).then(function (response) {
-					carregarContatos();
 					delete $scope.contato;
 					$scope.contatoForm.$setPristine();
+					carregarContatos();
 				}, function (response) {
 					console.log('Erro ao adquirir os dados');
 				});
@@ -94,6 +95,7 @@
 <body ng-controller="listaTelefonicaCtrl">
 	<div class="jumbotron">
 		<h3>{{app}}</h3>
+		{{message}}
 		<input class ="form-control" type="text" ng-model="criterioDeBusca" placeholder="O que você está buscando?">
 		<table class="table table-striped" ng-show="contatos.length > 0">
 			<tr>

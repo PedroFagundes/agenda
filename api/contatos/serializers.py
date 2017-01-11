@@ -7,4 +7,4 @@ from .models import Contato
 class ContatoSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Contato
-		fields = ('pk', 'nome', 'telefone', 'data', 'operadora')
+		fields = ('pk', 'serial', 'nome', 'telefone', 'data', 'operadora')

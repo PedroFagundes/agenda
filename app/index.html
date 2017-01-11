@@ -4,93 +4,14 @@
 	<meta charset="UTF-8">
 	<title>Lista Telefonica</title>
 	<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
-	<style>
-		.jumbotron {
-			width: 600px;
-			text-align: center;
-			margin-left: auto;
-			margin-right: auto;
-			margin-top: 20px;
-			padding: 20px;
-		}
-		.table {
-			margin-top: 20px;
-		}
-		.form-control {
-			margin-bottom: 10px;
-		}
-		.selecionado {
-			background-color: yellow;
-		}
-		.negrito {
-			font-weight: bold;
-		}
-	</style>
+	<link rel="stylesheet" href="css/app.css">
 	<script src="lib/angular/angular.js"></script>
 	<script src="lib/angular/angular-messages.js"></script>
 	<script src="lib/angular/angular-locale_pt-br.js"></script>
-	<script>
-		angular.module("listaTelefonica", ["ngMessages"]);
-		angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($scope, $http) {
-			$scope.app = "Lista Telefonica";
-			$scope.contatos = [];
-			$scope.operadoras = [];
 
-			var carregarOperadoras = function () {
-				$http.get('http://localhost:8000/operadoras').then(function (response) {
-					$scope.operadoras = response.data;
-				}, function (response) {
-					console.log('Erro ao adquirir os dados');
-				});
-			}
-
-			var carregarContatos = function () {
-				$http.get('http://localhost:8000/contatos/').then(function (response) {
-					$scope.contatos = response.data;
-					// coloca o objeto operadora respectivo a cada objeto contato
-					$scope.contatos.filter(function (contato) {
-						contato.operadora = $scope.operadoras.find(function (operadora) {
-							return operadora.pk == contato.operadora;
-						});
-					});
-				}, function (response) {
-					$scope.message = "Aconteceu um problema: " + response.status + ' - ' + response.statusText;
-				});
-			}
-
-			$scope.adicionarContato = function (contato) {
-				// permitir requisições da mesma origem
-				$http.defaults.headers.post["Content-Type"] = "text/plain";
-
-				contato.operadora = contato.operadora.pk;
-
-				$http.post('http://localhost:8000/contatos/', contato).then(function (response) {
-					delete $scope.contato;
-					$scope.contatoForm.$setPristine();
-					carregarContatos();
-				}, function (response) {
-					console.log('Erro ao adquirir os dados');
-				});
-			};
-			$scope.apagarContatos = function (contatos) {
-				$scope.contatos = contatos.filter(function (contato) {
-					if (!contato.selecionado) return contato;
-				});
-			};
-			$scope.isContatoSelecionado = function (contatos) {
-				return $scope.contatos.some(function (contato) {
-					return contato.selecionado;
-				});
-			};
-			$scope.ordenarPor = function (campo) {
-				$scope.criterioDeOrdenacao = campo;
-				$scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
-			};
-
-			carregarOperadoras();
-			carregarContatos();
-		});
-	</script>
+	<!-- Application -->
+	<script src="js/app.js"></script>
+	<script src="js/controllers/listaTelefonicaCtrl.js"></script>
 </head>
 <body ng-controller="listaTelefonicaCtrl">
 	<div class="jumbotron">
@@ -141,6 +62,6 @@
 		<button class="btn btn-primary btn-block" ng-click="adicionarContato(contato)" ng-disabled="contatoForm.$invalid">Adicionar Contato</button>
 		<button class="btn btn-danger btn-block" ng-click="apagarContatos(contatos)" ng-if="isContatoSelecionado(contatos)">Apagar Contatos</button>
 	</div>
-	<!-- <div ng-include="'../footer.html'"></div> -->
+	<div ng-include="'view/footer.html'"></div>
 </body>
 </html>

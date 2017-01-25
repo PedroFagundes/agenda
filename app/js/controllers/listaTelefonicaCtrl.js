@@ -7,7 +7,7 @@ angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($s
 		operadorasAPI.getOperadoras().then(function (response) {
 			$scope.operadoras = response.data;
 		}, function (response) {
-			console.log('Erro ao adquirir os dados');
+			$scope.error = "Não foi possível carregar os dados";
 		});
 	}
 
@@ -21,7 +21,7 @@ angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($s
 				});
 			});
 		}, function (response) {
-			$scope.message = "Aconteceu um problema: " + response.status + ' - ' + response.statusText;
+			$scope.error = "Não foi possível carregar os dados";
 		});
 	}
 
@@ -39,7 +39,7 @@ angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($s
 			$scope.contatoForm.$setPristine();
 			carregarContatos();
 		}, function (response) {
-			console.log('Erro ao adquirir os dados');
+			$scope.error = "Não foi possível carregar os dados";
 		});
 	};
 	$scope.apagarContatos = function (contatos) {

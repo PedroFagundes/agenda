@@ -32,6 +32,8 @@ angular.module("listaTelefonica").controller("listaTelefonicaCtrl", function ($s
 		contato.serial = serialGenerator.generate();
 		contato.operadora = contato.operadora.pk;
 
+		console.log(contato);
+
 		contatosAPI.saveContato(contato).then(function (response) {
 			delete $scope.contato;
 			$scope.contatoForm.$setPristine();

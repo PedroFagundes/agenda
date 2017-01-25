@@ -24,6 +24,7 @@ def api_contatos(request):
 		serializer = ContatoSerializer(contatos, many=True)
 		return JSONResponse(serializer.data)
 	if request.method == 'POST':
+		# import pdb; pdb.set_trace()
 		dados = json.loads(request.body)
 		serializer = ContatoSerializer(data=dados)
 		if serializer.is_valid():
